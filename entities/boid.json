@@ -1,0 +1,9 @@
+{
+    "object":"boid",
+    "png_file":"boid.png",
+    "pose":[0,0],
+    "pixmap":null,
+    "mass":50,
+    "predators":null,
+    "prey":null
+}
