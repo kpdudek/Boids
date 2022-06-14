@@ -24,6 +24,9 @@ class MainWindow(QMainWindow):
         self.canvas = Canvas()
         self.canvas.shutdown_signal.connect(self.close)
         self.settings = Settings()
+        self.settings_visible = True
+        self.settings.expand_collapse_settings_button.clicked.connect(self.expand_collapse_settings)
+        
         self.layout.addWidget(self.canvas)
         self.layout.addWidget(self.settings)
         self.show()
@@ -33,6 +36,17 @@ class MainWindow(QMainWindow):
         offset_x = int((self.screen_width-window_size[0])/2)
         offset_y = int((self.screen_height-window_size[1])/2)
         self.setGeometry(offset_x,offset_y,window_size[0],window_size[1])
+
+    def expand_collapse_settings(self):
+        geometry = self.geometry()
+        if self.settings_visible:
+            self.settings.settings_frame.hide()
+            self.settings_visible = False
+            self.canvas.resize_canvas(geometry.size().width(),self.canvas.window_size[1]+120)
+        else:
+            self.canvas.resize_canvas(geometry.size().width(),self.canvas.window_size[1]-120)
+            self.settings.settings_frame.show()
+            self.settings_visible = True
 
     def closeEvent(self, e):
         self.canvas.shutdown()
