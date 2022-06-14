@@ -32,6 +32,12 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>9</number>
+   </property>
    <item row="1" column="1">
     <widget class="QFrame" name="settings_frame">
      <property name="minimumSize">
@@ -275,8 +281,11 @@ font:  bold 10pt;</string>
       <iconset>
        <normaloff>icons/expand_down.png</normaloff>icons/expand_down.png</iconset>
      </property>
-     <property name="flat">
+     <property name="checkable">
       <bool>true</bool>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
      </property>
     </widget>
    </item>

@@ -6,13 +6,13 @@ from lib.Logger import Logger
 from lib.PaintUtils import PaintUtils
 
 class Camera(object):
-    def __init__(self,window_size,painter,scene):
+    def __init__(self,painter,scene):
         self.logger = Logger()
         self.paint_utils = PaintUtils()
-        self.window_size = window_size
         self.painter = painter
         self.scene = scene
         self.zoom_level = 1.0
+        self.window_size = None
 
         self.frames = {
             'camera':np.array([0.0,0.0]),

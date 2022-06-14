@@ -18,7 +18,7 @@ class Canvas(QLabel):
     shutdown_signal = pyqtSignal()
     def __init__(self):
         super().__init__()
-        window_size = [1000,800]
+        window_size = [800,400]
 
         self.is_shutting_down = False
         self.keys_pressed = []
@@ -30,7 +30,7 @@ class Canvas(QLabel):
         self.resize_canvas(window_size[0],window_size[1])
         self.logger = Logger()
         self.scene = Scene(self.fps)
-        self.camera = Camera(np.array([900,900]),self.painter,self.scene)
+        self.camera = Camera(self.painter,self.scene)
 
         self.game_timer = QTimer()
         self.game_timer.timeout.connect(self.game_loop)

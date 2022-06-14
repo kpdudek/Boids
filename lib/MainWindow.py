@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
 
     def test_scene(self):
         boid = Boid()
-        boid.config['pose'] = np.array([400.0,400.0])
+        boid.config['pose'] = np.array([400.0,200.0])
         self.canvas.scene.boids.append(boid)
 
     def expand_collapse_settings(self):
