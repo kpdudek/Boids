@@ -50,9 +50,10 @@ class Camera(object):
             self.paint_utils.set_color(self.painter,'black',True)
             self.painter.drawText(3,13,200,75,QtCore.Qt.TextWordWrap,str(int(fps)))
 
-    def paint_entity(self):
+    def paint_entity(self,boid):
         self.paint_utils.set_color(self.painter,'black',True,width=3)
-        pose = np.array([200.0,200.0])
+        # pose = np.array([200.0,200.0])
+        pose = boid.config['pose'].copy()
         pose_t = self.transform(pose)
         self.painter.drawEllipse(pose_t[0],pose_t[1],8,8)
         
@@ -60,4 +61,5 @@ class Camera(object):
         '''
             Draws all entities in the scene.
         '''
-        self.paint_entity()
+        for boid in self.scene.boids:
+            self.paint_entity(boid)

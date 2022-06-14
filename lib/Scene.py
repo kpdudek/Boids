@@ -13,6 +13,8 @@ class Scene(QtWidgets.QWidget):
         self.logger = Logger()
         self.file_paths = FilePaths()
 
+        self.boids = []
+
     def initialize_scene(self):        
         self.logger.log(f'Initializing scene...')
 

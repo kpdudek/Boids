@@ -55,7 +55,7 @@ class Canvas(QLabel):
         if isinstance(self.camera,Camera):
             self.camera.painter = self.painter
             self.camera.window_size = self.window_size
-            self.camera.reset()
+            # self.camera.reset()
 
     def resizeEvent(self, e):
         self.resize_canvas(e.size().width(),e.size().height())
