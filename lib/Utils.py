@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from cmath import log
 import sys, inspect, pathlib
 import datetime as dt
 

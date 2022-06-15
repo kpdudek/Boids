@@ -2,7 +2,7 @@
 
 import numpy as np
 from PyQt5 import QtCore
-from lib.Logger import Logger
+from lib.Utils import Logger
 from lib.PaintUtils import PaintUtils
 
 class Camera(object):
@@ -53,7 +53,8 @@ class Camera(object):
     def paint_entity(self,boid):
         self.paint_utils.set_color(self.painter,'black',True,width=3)
         # pose = np.array([200.0,200.0])
-        pose = boid.config['pose'].copy()
+        # pose = boid.config['pose'].copy()
+        pose = boid.physics.position.copy()
         pose_t = self.transform(pose)
         self.painter.drawEllipse(pose_t[0],pose_t[1],8,8)
         

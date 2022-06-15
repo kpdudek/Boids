@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5 import uic
 from lib.Canvas import Canvas
 
-from lib.Logger import FilePaths, Logger
+from lib.Utils import FilePaths, Logger
 from lib.Settings import Settings
 from lib.Boid import Boid
 import numpy as np
@@ -43,7 +43,11 @@ class MainWindow(QMainWindow):
 
     def test_scene(self):
         boid = Boid()
-        boid.config['pose'] = np.array([400.0,200.0])
+        boid.teleport(np.array([400.0,200.0]))
+        self.canvas.scene.boids.append(boid)
+
+        boid = Boid()
+        boid.teleport(np.array([200.0,200.0]))
         self.canvas.scene.boids.append(boid)
 
     def expand_collapse_settings(self):

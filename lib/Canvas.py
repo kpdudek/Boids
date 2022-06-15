@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QLabel, QApplication
 from PyQt5 import QtGui
 
 from lib.Camera import Camera
-from lib.Logger import Logger
+from lib.Utils import Logger
 from lib.Scene import Scene
 
 import numpy as np
@@ -24,6 +24,7 @@ class Canvas(QLabel):
         self.keys_pressed = []
         self.fps = 65.0
         self.loop_fps = 65.0
+        self.delta_t = 0.0
         self.painter = None
         
         self.camera = None
@@ -133,15 +134,22 @@ class Canvas(QLabel):
     def game_loop(self):
         tic = time.time()
         self.process_keys()
+        
+        force = np.zeros(2)
+        force[0] += 9.8
+        # print(self.delta_t)
+        t = 1.0 / self.fps
+        self.scene.update(force,t)
+        
         self.camera.clear_display()
-        self.scene.update()
         self.camera.update()
         self.camera.fps_overlay(self.loop_fps)
+        
         self.repaint()
         toc = time.time()
 
         # Calculate max FPS
-        loop_split = toc-tic
-        if loop_split > 0.0:
+        self.delta_t = toc-tic
+        if self.delta_t > 0.0:
             split_fps = 1.0/(toc-tic)
             self.loop_fps = (self.loop_fps + split_fps)/2.0

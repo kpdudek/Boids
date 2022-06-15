@@ -2,7 +2,7 @@
 
 import sys
 from lib.Canvas import Canvas
-from lib.Logger import Logger
+from lib.Utils import Logger
 from PyQt5.QtWidgets import QApplication
 from lib.MainWindow import MainWindow
 

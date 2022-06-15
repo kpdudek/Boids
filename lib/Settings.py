@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QMainWindow, QCheckBox, QWidget
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5 import uic
 
-from lib.Logger import FilePaths, Logger
+from lib.Utils import FilePaths, Logger
 
 class Settings(QWidget):
     '''

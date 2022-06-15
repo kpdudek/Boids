@@ -3,7 +3,7 @@
 import numpy as np
 from random import randint
 from PyQt5 import QtCore, QtWidgets
-from lib.Logger import Logger, FilePaths
+from lib.Utils import Logger, FilePaths
 
 class Scene(QtWidgets.QWidget):
     shutdown_signal = QtCore.pyqtSignal()
@@ -18,5 +18,6 @@ class Scene(QtWidgets.QWidget):
     def initialize_scene(self):        
         self.logger.log(f'Initializing scene...')
 
-    def update(self):
-        pass
+    def update(self,force,time):
+        for boid in self.boids:
+            boid.update(force,time)
