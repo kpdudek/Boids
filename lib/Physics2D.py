@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from math import cos,sin
 import numpy as np
 
 class Physics2D(object):
@@ -9,6 +10,7 @@ class Physics2D(object):
 
         self.time = None
         self.mass = 1.0
+        self.theta = 0.0
         self.position = np.zeros(2)
         self.velocity = np.zeros(2)
         self.acceleration = np.zeros(2)
@@ -27,5 +29,3 @@ class Physics2D(object):
             self.velocity[0] = self.max_velocity * np.sign(self.velocity[0])
         if abs(self.velocity[1]) > self.max_velocity:
             self.velocity[1] = self.max_velocity * np.sign(self.velocity[1])
-
-        return self.position.copy()

@@ -1,6 +1,6 @@
 {
     "object":"boid",
-    "png_file":"boid.png",
+    "png_file":"circle.png",
     "pose":[0.0,0.0],
     "pixmap":null,
     "mass":1.0,

@@ -33,6 +33,7 @@ class Canvas(QLabel):
         self.scene = Scene(self.fps)
         self.camera = Camera(self.painter,self.scene)
 
+        self.paused = False
         self.game_timer = QTimer()
         self.game_timer.timeout.connect(self.game_loop)
         self.game_timer.start(1000/self.fps)
@@ -101,14 +102,26 @@ class Canvas(QLabel):
     
     def keyPressEvent(self, event):
         key = event.key()
-        if key == Qt.Key_Escape:
-            self.logger.log(f'Sending shutdown signal...')
-            self.shutdown()
-        elif key == Qt.Key_C:
-            self.camera.reset()
-        else:
-            if key not in self.keys_pressed:
-                self.keys_pressed.append(key)
+        if not event.isAutoRepeat():
+            if key == Qt.Key_Escape:
+                self.logger.log(f'Sending shutdown signal...')
+                self.shutdown()
+            elif key == Qt.Key_C:
+                
+                    self.camera.reset()
+            elif key == Qt.Key_P:
+                if self.paused:
+                    self.logger.log('Resuming')
+                    self.paused = False
+                else:
+                    self.paused = True
+            elif key == Qt.Key_T:
+                self.scene.boids[0].physics.theta += 10.0
+            elif key == Qt.Key_R:
+                self.scene.boids[0].physics.theta -= 10.0
+            else:
+                if key not in self.keys_pressed:
+                    self.keys_pressed.append(key)
 
     def keyReleaseEvent(self, event):
         if not event.isAutoRepeat() and event.key() in self.keys_pressed:
@@ -132,12 +145,14 @@ class Canvas(QLabel):
             self.logger.log("FPS has dropped below the set value.",color='y')
 
     def game_loop(self):
-        tic = time.time()
-        self.process_keys()
+        # TODO: Make delta_t the time between last loop and this loop
+        if self.paused:
+            return
         
+        self.process_keys()
+        tic = time.time()
         force = np.zeros(2)
-        force[0] += 9.8
-        # print(self.delta_t)
+        # force[0] += 9.8
         t = 1.0 / self.fps
         self.scene.update(force,t)
         

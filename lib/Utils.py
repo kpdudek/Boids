@@ -2,12 +2,13 @@
 
 import sys, inspect, pathlib
 import datetime as dt
-
+ 
 class FilePaths(object):
     if sys.platform == 'win32':
         user_path = str(pathlib.Path().absolute()) + '\\'
         lib_path = user_path + 'lib\\'
         ui_path = user_path + 'ui\\'
+        entity_path = user_path + 'entities\\'
     elif sys.platform == 'linux':    
         user_path = str(pathlib.Path().absolute()) + '/'
         lib_path = user_path + 'lib/'

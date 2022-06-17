@@ -46,9 +46,9 @@ class MainWindow(QMainWindow):
         boid.teleport(np.array([400.0,200.0]))
         self.canvas.scene.boids.append(boid)
 
-        boid = Boid()
-        boid.teleport(np.array([200.0,200.0]))
-        self.canvas.scene.boids.append(boid)
+        # boid = Boid()
+        # boid.teleport(np.array([200.0,200.0]))
+        # self.canvas.scene.boids.append(boid)
 
     def expand_collapse_settings(self):
         geometry = self.geometry()

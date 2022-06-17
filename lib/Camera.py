@@ -56,7 +56,8 @@ class Camera(object):
         # pose = boid.config['pose'].copy()
         pose = boid.physics.position.copy()
         pose_t = self.transform(pose)
-        self.painter.drawEllipse(pose_t[0],pose_t[1],8,8)
+        # self.painter.drawEllipse(pose_t[0],pose_t[1],8,8)
+        self.painter.drawPixmap(pose_t[0],pose_t[1],boid.draw_pixmap)
         
     def update(self):
         '''
