@@ -1,0 +1,2 @@
+* Make a frame class that is similar to a boid but self draw axes using QLineItem added to QGraphicsScene
+

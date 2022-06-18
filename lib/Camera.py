@@ -1,67 +1,63 @@
 #!/usr/bin/env python3
 
-import numpy as np
-from PyQt5 import QtCore
+from PyQt5.QtCore import Qt, QTimer, pyqtSignal
+from PyQt5.QtWidgets import QLabel, QApplication, QGraphicsView
+from PyQt5 import QtGui
+
 from lib.Utils import Logger
-from lib.PaintUtils import PaintUtils
+from lib.Scene import Scene
 
-class Camera(object):
-    def __init__(self,painter,scene):
-        self.logger = Logger()
-        self.paint_utils = PaintUtils()
-        self.painter = painter
-        self.scene = scene
-        self.zoom_level = 1.0
-        self.window_size = None
+import numpy as np
+import time
 
-        self.frames = {
-            'camera':np.array([0.0,0.0]),
-            'scene':np.array([0.0,0.0])
-            }
+class Camera(QGraphicsView):
+    keypress_signal = pyqtSignal(QtGui.QKeyEvent)
+    keyrelease_signal = pyqtSignal(QtGui.QKeyEvent)
 
-        self.display_fps_overlay = True
-
-    def reset(self):
-        self.teleport(np.zeros(2))
-
-    def teleport(self,pose):
-        self.frames['scene'] = pose
-    
-    def translate(self,vec):
-        self.frames['scene'] = self.frames['scene'].copy() + -1*vec
-
-    def zoom(self,multiplier):
-        self.zoom_level = multiplier
-
-    def transform(self,point,parent_frame='camera',child_frame='scene'):
-        '''
-        Transforms a point from the parent frame to the child frame.
-        Default behavior is camera frame -> scene frame.
-        '''
-        coord = point + (self.frames[parent_frame] - self.frames[child_frame])
-        return coord
-
-    def clear_display(self):
-        self.paint_utils.set_color(self.painter,'light_gray',True)
-        self.painter.drawRect(0,0,self.window_size[0],self.window_size[1])
-
-    def fps_overlay(self,fps):
-        if self.display_fps_overlay:
-            self.paint_utils.set_color(self.painter,'black',True)
-            self.painter.drawText(3,13,200,75,QtCore.Qt.TextWordWrap,str(int(fps)))
-
-    def paint_entity(self,boid):
-        self.paint_utils.set_color(self.painter,'black',True,width=3)
-        # pose = np.array([200.0,200.0])
-        # pose = boid.config['pose'].copy()
-        pose = boid.physics.position.copy()
-        pose_t = self.transform(pose)
-        # self.painter.drawEllipse(pose_t[0],pose_t[1],8,8)
-        self.painter.drawPixmap(pose_t[0],pose_t[1],boid.draw_pixmap)
+    def __init__(self):
+        super().__init__()
         
-    def update(self):
-        '''
-            Draws all entities in the scene.
-        '''
-        for boid in self.scene.boids:
-            self.paint_entity(boid)
+        self.camera = None
+        self.logger = Logger()
+
+        self.setResizeAnchor(QGraphicsView.NoAnchor)
+        self.setVerticalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
+        self.setHorizontalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
+        self.horizontalScrollBar().disconnect()
+        self.verticalScrollBar().disconnect()
+       
+    def mousePressEvent(self, e):
+        self.button = e.button()
+        pose = np.array([e.x(),e.y()])
+        self.logger.log(f'Mouse press ({self.button}) at: [{pose[0]},{pose[1]}]')
+        if self.button == 1: # Left click
+            pass
+        elif self.button == 2: # Right click
+            pass
+        elif self.button == 4: # Wheel click
+            pass
+    
+    def mouseMoveEvent(self, e):
+        pose = np.array([e.x(),e.y()])
+        if self.button == 1: # Left click
+            pass
+        elif self.button == 2: # Right click
+            pass
+        elif self.button == 4: # Wheel click
+            pass
+    
+    def mouseReleaseEvent(self, e):
+        pose = np.array([e.x(),e.y()])
+        if self.button == 1: # Left click
+            pass
+        elif self.button == 2: # Right click
+            pass
+        elif self.button == 4: # Wheel click
+            pass
+        self.button = None
+    
+    def keyPressEvent(self, event):
+        self.keypress_signal.emit(event)
+
+    def keyReleaseEvent(self, event):
+        self.keyrelease_signal.emit(event)

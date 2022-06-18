@@ -15,7 +15,7 @@ class Physics2D(object):
         self.velocity = np.zeros(2)
         self.acceleration = np.zeros(2)
 
-        self.max_velocity = 200.0
+        self.max_velocity = 600.0
 
     def update(self,force,time):
         acceleration = force / self.mass
