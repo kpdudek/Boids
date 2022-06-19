@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-from random import randint, random
-from lib.Utils import Logger,FilePaths
-from lib.Physics2D import Physics2D
-from PyQt5.QtCore import Qt
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QGraphicsPixmapItem
+import json
 import numpy as np
-import json, time
+from PyQt5 import QtGui
+from math import degrees
+from random import randint
+from lib.Physics2D import Physics2D
+from lib.Utils import Logger,FilePaths
+from PyQt5.QtWidgets import QGraphicsPixmapItem
 
 class Boid(object):
 
@@ -44,6 +44,7 @@ class Boid(object):
         resulting_force = self.steering_force + force
         self.physics.update(resulting_force,time)
         self.theta_prev = self.physics.theta
+        
         if self.physics.position[0] > self.boundary_size[0]:
             self.physics.position[0] = 0.0
         elif self.physics.position[0] < 0.0:
@@ -52,5 +53,7 @@ class Boid(object):
             self.physics.position[1] = 0.0
         elif self.physics.position[1] < 0.0:
             self.physics.position[1] = self.boundary_size[1].copy()
+        
         pose = self.physics.position.copy()
+        self.pixmap.setRotation(degrees(-self.physics.theta))
         self.pixmap.setPos(pose[0],pose[1])

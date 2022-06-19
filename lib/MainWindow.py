@@ -59,6 +59,7 @@ class MainWindow(QMainWindow):
 
         self.fps_log_timer = QTimer()
         self.fps_log_timer.timeout.connect(self.fps_log)
+        self.fps_log_timer.start(2000)
 
     def keyPressEvent(self, event):
         key = event.key()
@@ -73,24 +74,6 @@ class MainWindow(QMainWindow):
             else:
                 self.logger.log('Pausing...')
                 self.paused = True
-        elif key == Qt.Key_Q:
-            self.scene.boids[0].physics.theta += 10
-            self.scene.boids[0].pixmap.setRotation(self.scene.boids[0].physics.theta)
-        elif key == Qt.Key_R:
-            self.scene.boids[0].physics.theta -= 10
-            self.scene.boids[0].pixmap.setRotation(self.scene.boids[0].physics.theta)
-        elif key == Qt.Key_W:
-            self.camera.translate(0,10)
-        elif key == Qt.Key_S:
-            self.camera.translate(0,-10)
-        elif key == Qt.Key_A:
-            self.camera.translate(10,0)
-        elif key == Qt.Key_D:
-            self.camera.translate(-10,0)
-        elif key == Qt.Key_Z:
-            self.camera.scale(.8,.8)
-        elif key == Qt.Key_X:
-            self.camera.scale(1.2,1.2)
         elif not event.isAutoRepeat():
             self.keys_pressed.append(key)
     
@@ -114,7 +97,21 @@ class MainWindow(QMainWindow):
             self.logger.log("FPS has dropped below the set value.",color='y')
 
     def process_keys(self):
-        cam_speed = 3.0
+        cam_speed = 6.0
+        zoom_speed = 0.008
+        for key in self.keys_pressed:
+            if key == Qt.Key_W:
+                self.camera.translate(0,cam_speed)
+            elif key == Qt.Key_S:
+                self.camera.translate(0,-cam_speed)
+            elif key == Qt.Key_A:
+                self.camera.translate(cam_speed,0)
+            elif key == Qt.Key_D:
+                self.camera.translate(-cam_speed,0)
+            elif key == Qt.Key_Z:
+                self.camera.scale(1.0-zoom_speed,1.0-zoom_speed)
+            elif key == Qt.Key_X:
+                self.camera.scale(1.0+zoom_speed,1.0+zoom_speed)
 
     def game_loop(self):
         # TODO: Make delta_t the time between last loop and this loop

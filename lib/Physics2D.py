@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
-from math import cos,sin
 import numpy as np
+from math import degrees
+from lib.Geometry import edge_angle
+
 
 class Physics2D(object):
 
@@ -23,6 +25,7 @@ class Physics2D(object):
 
         self.velocity = self.velocity + delta_v
         self.position = self.position + (self.velocity * time)
+        self.theta = edge_angle(np.zeros(2),self.velocity.copy(),np.array([100.0,0.0]))
 
         # TODO: cap the magnitude, not each component individually
         if abs(self.velocity[0]) > self.max_velocity:
