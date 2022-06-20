@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from math import atan2
-import numpy as np
 
 def edge_angle(V0,V1,V2):
     '''

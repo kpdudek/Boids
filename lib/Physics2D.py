@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
 import numpy as np
-from math import degrees
 from lib.Geometry import edge_angle
-
 
 class Physics2D(object):
 

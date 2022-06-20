@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import sys, inspect, pathlib
 import datetime as dt
+import sys, inspect, pathlib
  
 class FilePaths(object):
     if sys.platform == 'win32':

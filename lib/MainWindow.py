@@ -1,19 +1,16 @@
 #!/usr/bin/env python3
 
-from PyQt5.QtWidgets import QMainWindow, QCheckBox, QWidget
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtCore import QTimer
-from PyQt5.QtGui import QIcon
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QApplication
-from PyQt5 import uic
-from lib.Camera import Camera
-from lib.Scene import Scene
 import time
-
-from lib.Utils import FilePaths, Logger
-from lib.Settings import Settings
 import numpy as np
+from PyQt5 import uic
+from lib.Scene import Scene
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
+from lib.Camera import Camera
+from PyQt5.QtCore import QTimer
+from lib.Settings import Settings
+from lib.Utils import FilePaths, Logger
+from PyQt5.QtWidgets import QMainWindow
 
 class MainWindow(QMainWindow):
     '''
@@ -32,12 +29,19 @@ class MainWindow(QMainWindow):
         offset_y = int((self.screen_height-self.boundary_size[1])/2)
         self.setGeometry(offset_x,offset_y,self.boundary_size[0],self.boundary_size[1])
 
+        self.button = None
         self.keys_pressed = []
+
         self.scene = Scene(self.boundary_size)
+
         self.camera = Camera()
         self.camera.setScene(self.scene)
         self.camera.keypress_signal.connect(self.keyPressEvent)
         self.camera.keyrelease_signal.connect(self.keyReleaseEvent)
+        self.camera.mousepress_signal.connect(self.mousePressEvent)
+        self.camera.mousemove_signal.connect(self.mouseMoveEvent)
+        self.camera.mouserelease_signal.connect(self.mouseReleaseEvent)
+
         self.settings = Settings()
         self.settings_visible = True
         self.settings.expand_collapse_settings_button.clicked.connect(self.expand_collapse_settings)
@@ -47,8 +51,6 @@ class MainWindow(QMainWindow):
         self.setFocusPolicy(Qt.StrongFocus)
         self.show()
 
-        self.is_shutting_down = False
-        self.keys_pressed = []
         self.fps = 65.0
         self.loop_fps = 65.0
         self.delta_t = 0.0
@@ -79,7 +81,37 @@ class MainWindow(QMainWindow):
     
     def keyReleaseEvent(self, event):
         if not event.isAutoRepeat() and event.key() in self.keys_pressed:
-            self.keys_pressed.remove(event.key())        
+            self.keys_pressed.remove(event.key())
+    
+    def mousePressEvent(self, e):
+        self.button = e.button()
+        pose = np.array([e.x(),e.y()])
+        self.logger.log(f'Mouse press ({self.button}) at: [{pose[0]},{pose[1]}]')
+        if self.button == 1: # Left click
+            pass
+        elif self.button == 2: # Right click
+            pass
+        elif self.button == 4: # Wheel click
+            pass
+
+    def mouseMoveEvent(self, e):
+        pose = np.array([e.x(),e.y()])
+        if self.button == 1: # Left click
+            pass
+        elif self.button == 2: # Right click
+            pass
+        elif self.button == 4: # Wheel click
+            pass
+    
+    def mouseReleaseEvent(self, e):
+        pose = np.array([e.x(),e.y()])
+        if self.button == 1: # Left click
+            pass
+        elif self.button == 2: # Right click
+            pass
+        elif self.button == 4: # Wheel click
+            pass
+        self.button = None
 
     def expand_collapse_settings(self):
         if self.settings_visible:

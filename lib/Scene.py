@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 
-from random import randint
 import numpy as np
-from PyQt5.QtWidgets import QGraphicsScene,QGraphicsRectItem
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QBrush, QPen
-from scipy import rand
-from lib.Utils import Logger, FilePaths
 from lib.Boid import Boid
+from random import randint
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPen
+from lib.Utils import Logger, FilePaths
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsRectItem
 
 class Scene(QGraphicsScene):
     shutdown_signal = QtCore.pyqtSignal()

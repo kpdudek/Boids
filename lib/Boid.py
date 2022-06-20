@@ -7,7 +7,7 @@ from math import degrees
 from random import randint
 from lib.Physics2D import Physics2D
 from lib.Utils import Logger,FilePaths
-from PyQt5.QtWidgets import QGraphicsPixmapItem
+from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsLineItem
 
 class Boid(object):
 
@@ -30,11 +30,19 @@ class Boid(object):
     def load_config(self):
         with open(f'{self.file_paths.entity_path}boid.json','r') as fp:
             self.config = json.load(fp)
+        
         png_file = f"{self.file_paths.entity_path}{self.config['png_file']}"
-
         pixmap = QtGui.QPixmap(png_file) #.scaled(200, 200, Qt.KeepAspectRatio)
         self.pixmap = QGraphicsPixmapItem(pixmap)
         self.pixmap.setTransformOriginPoint(pixmap.size().width()/2,pixmap.size().height()/2)
+
+        x = pixmap.size().width()/2
+        y = pixmap.size().height()/2
+        self.debug_line = QGraphicsLineItem(x+25,y,x+125,y,self.pixmap)
+        self.debug_line.hide()
+
+        starting_pose = np.array(self.config['pose'])
+        self.teleport(starting_pose)
 
     def teleport(self,pose):
         self.physics.position = pose
@@ -44,7 +52,8 @@ class Boid(object):
         resulting_force = self.steering_force + force
         self.physics.update(resulting_force,time)
         self.theta_prev = self.physics.theta
-        
+
+        # Wrap position within the boundary size
         if self.physics.position[0] > self.boundary_size[0]:
             self.physics.position[0] = 0.0
         elif self.physics.position[0] < 0.0:
@@ -53,7 +62,7 @@ class Boid(object):
             self.physics.position[1] = 0.0
         elif self.physics.position[1] < 0.0:
             self.physics.position[1] = self.boundary_size[1].copy()
-        
+            
         pose = self.physics.position.copy()
         self.pixmap.setRotation(degrees(-self.physics.theta))
         self.pixmap.setPos(pose[0],pose[1])
