@@ -5,6 +5,7 @@ import numpy as np
 from PyQt5 import QtGui
 from math import degrees
 from random import randint
+from PyQt5.QtCore import Qt
 from lib.Physics2D import Physics2D
 from lib.Utils import Logger,FilePaths
 from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsLineItem
@@ -32,7 +33,15 @@ class Boid(object):
             self.config = json.load(fp)
         
         png_file = f"{self.file_paths.entity_path}{self.config['png_file']}"
-        pixmap = QtGui.QPixmap(png_file) #.scaled(200, 200, Qt.KeepAspectRatio)
+
+        # Scale the pixmap based on the 1x2 array or keep default size if value is null
+        if self.config['png_scale']:
+            x = self.config['png_scale'][0]
+            y = self.config['png_scale'][1]
+            pixmap = QtGui.QPixmap(png_file).scaled(x, y, Qt.KeepAspectRatio)
+        else:
+            pixmap = QtGui.QPixmap(png_file)
+        
         self.pixmap = QGraphicsPixmapItem(pixmap)
         self.pixmap.setTransformOriginPoint(pixmap.size().width()/2,pixmap.size().height()/2)
 
