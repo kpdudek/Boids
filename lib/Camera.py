@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-from PyQt5 import QtGui
-from lib.Utils import Logger
-from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QGraphicsView
+from lib.Utils import initialize_logger
+from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5 import QtGui
 
 class Camera(QGraphicsView):
     keypress_signal = pyqtSignal(QtGui.QKeyEvent)
@@ -14,7 +14,7 @@ class Camera(QGraphicsView):
 
     def __init__(self):
         super().__init__()        
-        self.logger = Logger()
+        self.logger = initialize_logger()
 
         self.setResizeAnchor(QGraphicsView.NoAnchor)
         self.setVerticalScrollBarPolicy( Qt.ScrollBarAlwaysOff )

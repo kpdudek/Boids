@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 
-import json
-import numpy as np
-from PyQt5 import QtGui
-from math import degrees
-from random import randint
-from PyQt5.QtCore import Qt
-from lib.Physics2D import Physics2D
-from lib.Utils import Logger,FilePaths
 from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsLineItem
+from lib.Utils import initialize_logger, FilePaths
+from lib.Physics2D import Physics2D
+from PyQt5.QtCore import Qt
+from random import randint
+from math import degrees
+from PyQt5 import QtGui
+import numpy as np
+import json
 
 class Boid(object):
 
     def __init__(self,boundary_size):
         super().__init__()
-        self.logger = Logger()
+        self.logger = initialize_logger()
         self.file_paths = FilePaths()
         self.config = None
         self.physics = Physics2D()

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from PyQt5 import uic
+from lib.Utils import FilePaths, initialize_logger
 from PyQt5.QtWidgets import QWidget
-from lib.Utils import FilePaths, Logger
+from PyQt5 import uic
 
 class Settings(QWidget):
     '''
@@ -11,6 +11,6 @@ class Settings(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.logger = Logger()
+        self.logger = initialize_logger()
         self.file_paths = FilePaths()
         uic.loadUi(f'{self.file_paths.user_path}ui/Settings.ui',self)

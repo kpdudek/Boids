@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 
-import time
-import numpy as np
-from PyQt5 import uic
-from lib.Scene import Scene
-from PyQt5.QtCore import Qt
+from lib.Utils import FilePaths, initialize_logger
+from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtCore import Qt, QTimer
+from lib.Settings import Settings
 from PyQt5.QtGui import QIcon
 from lib.Camera import Camera
-from PyQt5.QtCore import QTimer
-from lib.Settings import Settings
-from lib.Utils import FilePaths, Logger
-from PyQt5.QtWidgets import QMainWindow
+from lib.Scene import Scene
+from PyQt5 import uic
+import numpy as np
+import time
 
 class MainWindow(QMainWindow):
     '''
@@ -18,7 +17,7 @@ class MainWindow(QMainWindow):
     '''
     def __init__(self,screen_resolution):
         super().__init__()
-        self.logger = Logger()
+        self.logger = initialize_logger()
         self.file_paths = FilePaths()
         uic.loadUi(f'{self.file_paths.user_path}ui/MainWindow.ui',self)
         self.setWindowTitle('Boids')
@@ -28,9 +27,6 @@ class MainWindow(QMainWindow):
         offset_x = int((self.screen_width-self.boundary_size[0])/2)
         offset_y = int((self.screen_height-self.boundary_size[1])/2)
         self.setGeometry(offset_x,offset_y,self.boundary_size[0],self.boundary_size[1])
-
-        self.button = None
-        self.keys_pressed = []
 
         self.scene = Scene(self.boundary_size)
 
@@ -51,6 +47,8 @@ class MainWindow(QMainWindow):
         self.setFocusPolicy(Qt.StrongFocus)
         self.show()
 
+        self.button = None
+        self.keys_pressed = []
         self.fps = 65.0
         self.loop_fps = 65.0
         self.delta_t = 0.0
@@ -71,10 +69,10 @@ class MainWindow(QMainWindow):
             self.camera.resetTransform()
         elif key == Qt.Key_P:
             if self.paused:
-                self.logger.log('Resuming...')
+                self.logger.info('Resuming...')
                 self.paused = False
             else:
-                self.logger.log('Pausing...')
+                self.logger.info('Pausing...')
                 self.paused = True
         elif not event.isAutoRepeat():
             self.keys_pressed.append(key)
@@ -86,7 +84,7 @@ class MainWindow(QMainWindow):
     def mousePressEvent(self, e):
         self.button = e.button()
         pose = np.array([e.x(),e.y()])
-        self.logger.log(f'Mouse press ({self.button}) at: [{pose[0]},{pose[1]}]')
+        self.logger.info(f'Mouse press ({self.button}) at: [{pose[0]},{pose[1]}]')
         if self.button == 1: # Left click
             pass
         elif self.button == 2: # Right click
@@ -124,9 +122,9 @@ class MainWindow(QMainWindow):
             self.settings.expand_collapse_settings_button.setIcon(QIcon(f'{self.file_paths.user_path}ui/icons/expand_down.png'))
 
     def fps_log(self):
-        self.logger.log(f'Max FPS: {self.loop_fps}')
+        self.logger.info(f'Max FPS: {self.loop_fps}')
         if self.loop_fps<self.fps:
-            self.logger.log("FPS has dropped below the set value.",color='y')
+            self.logger.warn("FPS has dropped below the set value.")
 
     def process_keys(self):
         cam_speed = 6.0

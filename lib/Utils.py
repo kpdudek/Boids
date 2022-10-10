@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import datetime as dt
-import sys, inspect, pathlib
+from logging.handlers import RotatingFileHandler
+import sys, pathlib, logging
  
 class FilePaths(object):
     if sys.platform == 'win32':
@@ -13,72 +13,28 @@ class FilePaths(object):
         user_path = str(pathlib.Path().absolute()) + '/'
         lib_path = user_path + 'lib/'
         ui_path = user_path + 'ui/'
+        entity_path = user_path + 'entities/'
     else:
         raise Error('OS not recognized!')
 
-class Logger():
-    def __init__(self):
-        self.file_paths = FilePaths()
+def initialize_logger() -> logging.Logger:
+    file_paths = FilePaths()
+    logger = logging.getLogger("Rotating Log")
+    logger.setLevel(logging.INFO)
 
-    def insert_blank_lines(self,num,console_out=False):
-        '''
-        Inserts blank lines into the log file to help differentiate game sessions.
-        params:
-            num (int): Number of blank lines to insert. Must be >=1
-        '''
-        if num < 1:
-            return
-        elif num == 1:
-            log_msg = ''
-        elif num > 1:
-            log_msg = '\n'*(num-1)
-        self.fp = open(f'{self.file_paths.user_path}logs.txt','a')
-        self.fp.write(f'{log_msg}')
-        if console_out:
-            print(log_msg)
-        self.fp.close()
-        
-    def log(self, text, color=None):
-        '''
-        Display the text passed and append to the logs.txt file
-        params:
-            text (str): Message to be printed and logged
-            color (str): Optional. Color to print the message in. Default is white.
-        '''
-        self.fp = open(f'{self.file_paths.user_path}logs.txt','a')
+    if not logger.hasHandlers():
+        max_size = 1024*1024*10 # 10Mb
+        path = f'{file_paths.user_path}demo_hmi.log'
+        formatter = logging.Formatter('[%(asctime)s.%(msecs)03d] (%(filename)s:%(lineno)d) %(levelname)s - %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
 
-        RESET = '\033[m' # reset to the default color
-        GREEN =  '\033[32m'
-        RED = '\033[31m'
-        YELLOW = '\033[33m'
-        CYAN = '\033[36m'
+        file_handler = RotatingFileHandler(path, maxBytes=max_size,backupCount=5)
+        file_handler.setFormatter(formatter)
 
-        # Prepare log message's time of call and filename that the function is called in
-        curr_time = '[%s]'%(str(dt.datetime.now())) # date and time
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(formatter)
 
-        frame = inspect.stack()[1]
-        filepath = frame[0].f_code.co_filename
-        if sys.platform == 'win32':
-            filename = ' (%s)'%(filepath.split('\\')[-1].split('.')[0])
-        elif sys.platform == 'linux':    
-            filename = ' (%s)'%(filepath.split('/')[-1].split('.')[0])
-        else:
-            filename = ''
-
-        # Form log message
-        log_msg = curr_time + filename + ' ' + text
-
-        # Print to terminal in specified color
-        if color == 'g' or color == 'G':
-            print(GREEN + log_msg + RESET)
-        elif color == 'r' or color == 'R':
-            print(RED + log_msg + RESET)
-        elif color == 'y' or color == 'Y':
-            print(YELLOW + log_msg + RESET)
-        elif color == 'c' or color == 'C':
-            print(CYAN + log_msg + RESET)
-        else:
-            print(log_msg)
-        
-        self.fp.write(f'{log_msg}\n')
-        self.fp.close()
+        logger.addHandler(console_handler)
+        logger.addHandler(file_handler)
+        logger.info(f"Console and File loggers initialized.")
+    
+    return logger

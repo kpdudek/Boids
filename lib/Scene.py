@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 
-import numpy as np
-from PyQt5 import QtCore
-from lib.Boid import Boid
-from random import randint
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPen
-from lib.Utils import Logger, FilePaths
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsRectItem
+from lib.Utils import initialize_logger, FilePaths
+from PyQt5.QtGui import QPen
+from PyQt5.QtCore import Qt
+from random import randint
+from lib.Boid import Boid
+from PyQt5 import QtCore
+import numpy as np
 
 class Scene(QGraphicsScene):
     shutdown_signal = QtCore.pyqtSignal()
 
     def __init__(self,boundary_size):
         super().__init__()
-        self.logger = Logger()
+        self.logger = initialize_logger()
         self.file_paths = FilePaths()
 
         self.boundary_size = boundary_size
@@ -23,7 +23,7 @@ class Scene(QGraphicsScene):
         self.initialize_scene()
 
     def initialize_scene(self):        
-        self.logger.log(f'Initializing scene...')
+        self.logger.info(f'Initializing scene...')
         self.boids = []
 
         self.boundary_size = np.array([1500.0,800.0])
