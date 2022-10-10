@@ -4,6 +4,7 @@ from logging.handlers import RotatingFileHandler
 import sys, pathlib, logging
  
 class FilePaths(object):
+    
     if sys.platform == 'win32':
         user_path = str(pathlib.Path().absolute()) + '\\'
         lib_path = user_path + 'lib\\'
@@ -24,7 +25,7 @@ def initialize_logger() -> logging.Logger:
 
     if not logger.hasHandlers():
         max_size = 1024*1024*10 # 10Mb
-        path = f'{file_paths.user_path}demo_hmi.log'
+        path = f'{file_paths.user_path}boids.log'
         formatter = logging.Formatter('[%(asctime)s.%(msecs)03d] (%(filename)s:%(lineno)d) %(levelname)s - %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
 
         file_handler = RotatingFileHandler(path, maxBytes=max_size,backupCount=5)

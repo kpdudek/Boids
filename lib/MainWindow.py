@@ -12,9 +12,7 @@ import numpy as np
 import time
 
 class MainWindow(QMainWindow):
-    '''
-    This class initializes the window
-    '''
+
     def __init__(self,screen_resolution):
         super().__init__()
         self.logger = initialize_logger()
@@ -64,7 +62,7 @@ class MainWindow(QMainWindow):
     def keyPressEvent(self, event):
         key = event.key()
         if key == Qt.Key_Escape:
-            self.close()
+            self.shutdown()
         elif key == Qt.Key_C:
             self.camera.resetTransform()
         elif key == Qt.Key_P:
@@ -142,6 +140,12 @@ class MainWindow(QMainWindow):
                 self.camera.scale(1.0-zoom_speed,1.0-zoom_speed)
             elif key == Qt.Key_X:
                 self.camera.scale(1.0+zoom_speed,1.0+zoom_speed)
+
+    def shutdown(self):
+        self.logger.info('Shutdown called...')
+        self.game_timer.stop()
+        self.fps_log_timer.stop()
+        self.close()
 
     def game_loop(self):
         # TODO: Make delta_t the time between last loop and this loop

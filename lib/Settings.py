@@ -5,9 +5,6 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5 import uic
 
 class Settings(QWidget):
-    '''
-    This class initializes the window
-    '''
 
     def __init__(self):
         super().__init__()
