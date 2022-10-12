@@ -20,11 +20,24 @@ class MainWindow(QMainWindow):
         uic.loadUi(f'{self.file_paths.user_path}ui/MainWindow.ui',self)
         self.setWindowTitle('Boids')
         
-        self.boundary_size = [1500,800]
+        self.boundary_size = np.array([1500.0,800.0]) #[1500,800]
         self.screen_width, self.screen_height = screen_resolution.width(), screen_resolution.height()
         offset_x = int((self.screen_width-self.boundary_size[0])/2)
         offset_y = int((self.screen_height-self.boundary_size[1])/2)
         self.setGeometry(offset_x,offset_y,self.boundary_size[0],self.boundary_size[1])
+        
+        self.button = None
+        self.keys_pressed = []
+        self.fps = 65.0
+        self.loop_fps = 65.0
+        self.delta_t = 0.0
+        self.paused = False
+
+        self.game_timer = QTimer()
+        self.game_timer.timeout.connect(self.game_loop)
+
+        self.fps_log_timer = QTimer()
+        self.fps_log_timer.timeout.connect(self.fps_log)
 
         self.scene = Scene(self.boundary_size)
 
@@ -36,48 +49,17 @@ class MainWindow(QMainWindow):
         self.camera.mousemove_signal.connect(self.mouseMoveEvent)
         self.camera.mouserelease_signal.connect(self.mouseReleaseEvent)
 
-        self.settings = Settings()
+        self.settings = Settings(self)
         self.settings_visible = True
         self.settings.expand_collapse_settings_button.clicked.connect(self.expand_collapse_settings)
-        
+
         self.layout.addWidget(self.camera)
         self.layout.addWidget(self.settings)
         self.setFocusPolicy(Qt.StrongFocus)
         self.show()
-
-        self.button = None
-        self.keys_pressed = []
-        self.fps = 65.0
-        self.loop_fps = 65.0
-        self.delta_t = 0.0
-        self.paused = False
-        self.game_timer = QTimer()
-        self.game_timer.timeout.connect(self.game_loop)
+        
+        self.settings.reset_simulation()
         self.game_timer.start(1000/self.fps)
-
-        self.fps_log_timer = QTimer()
-        self.fps_log_timer.timeout.connect(self.fps_log)
-        self.fps_log_timer.start(2000)
-
-    def keyPressEvent(self, event):
-        key = event.key()
-        if key == Qt.Key_Escape:
-            self.shutdown()
-        elif key == Qt.Key_C:
-            self.camera.resetTransform()
-        elif key == Qt.Key_P:
-            if self.paused:
-                self.logger.info('Resuming...')
-                self.paused = False
-            else:
-                self.logger.info('Pausing...')
-                self.paused = True
-        elif not event.isAutoRepeat():
-            self.keys_pressed.append(key)
-    
-    def keyReleaseEvent(self, event):
-        if not event.isAutoRepeat() and event.key() in self.keys_pressed:
-            self.keys_pressed.remove(event.key())
     
     def mousePressEvent(self, e):
         self.button = e.button()
@@ -108,7 +90,33 @@ class MainWindow(QMainWindow):
         elif self.button == 4: # Wheel click
             pass
         self.button = None
+    
+    def keyPressEvent(self, event):
+        key = event.key()
+        if key == Qt.Key_Escape:
+            self.shutdown()
+        elif key == Qt.Key_C:
+            self.camera.resetTransform()
+        elif key == Qt.Key_P:
+            if self.paused:
+                self.logger.info('Resuming...')
+                self.paused = False
+            else:
+                self.logger.info('Pausing...')
+                self.paused = True
+        elif not event.isAutoRepeat():
+            self.keys_pressed.append(key)
+    
+    def keyReleaseEvent(self, event):
+        if not event.isAutoRepeat() and event.key() in self.keys_pressed:
+            self.keys_pressed.remove(event.key())
 
+    def shutdown(self):
+        self.logger.info('Shutdown called...')
+        self.game_timer.stop()
+        self.fps_log_timer.stop()
+        self.close()
+    
     def expand_collapse_settings(self):
         if self.settings_visible:
             self.settings.settings_frame.hide()
@@ -140,24 +148,19 @@ class MainWindow(QMainWindow):
                 self.camera.scale(1.0-zoom_speed,1.0-zoom_speed)
             elif key == Qt.Key_X:
                 self.camera.scale(1.0+zoom_speed,1.0+zoom_speed)
-
-    def shutdown(self):
-        self.logger.info('Shutdown called...')
-        self.game_timer.stop()
-        self.fps_log_timer.stop()
-        self.close()
-
+    
     def game_loop(self):
         # TODO: Make delta_t the time between last loop and this loop
         if self.paused:
             return
+        tic = time.time()
         
         self.process_keys()
-
-        tic = time.time()
         force = np.zeros(2)
+        
         t = 1.0 / self.fps
         self.scene.update(force,t)        
+        
         toc = time.time()
 
         # Calculate max FPS

@@ -1,7 +1,8 @@
 {
     "object":"boid",
     "png_file":"boid.png",
-    "png_scale":null,
+    "png_scale":[1.0,1.0],
+    "maintain_aspect":true,
     "pose":[0.0,0.0],
     "pixmap":null,
     "mass":1.0,

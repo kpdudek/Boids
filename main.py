@@ -7,7 +7,6 @@ import sys
 
 def main():
     logger = initialize_logger()
-    
     logger.info("Simulation starting...")
     app = QApplication(sys.argv)
     screen_resolution = app.desktop().screenGeometry()

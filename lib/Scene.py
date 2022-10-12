@@ -18,15 +18,17 @@ class Scene(QGraphicsScene):
         self.file_paths = FilePaths()
 
         self.boundary_size = boundary_size
-        self.number_of_boids = 50
-        self.boids = []
-        self.initialize_scene()
 
-    def initialize_scene(self):        
-        self.logger.info(f'Initializing scene...')
-        self.boids = []
+    def initialize_scene(self,num_boids=50):        
+        self.logger.info(f'Initializing scene with {num_boids} boids...')
+        self.number_of_boids = num_boids
 
-        self.boundary_size = np.array([1500.0,800.0])
+        # Remove all items
+        self.boids = []
+        items = self.items()
+        for item in items:
+            self.removeItem(item)
+
         self.setSceneRect(0,0,self.boundary_size[0],self.boundary_size[1])
 
         rect = QGraphicsRectItem(0.0,0.0,self.boundary_size[0],self.boundary_size[1])
@@ -37,6 +39,14 @@ class Scene(QGraphicsScene):
 
         for i in range(self.number_of_boids):
             self.spawn_boid()
+
+    def set_debug_mode(self,enabled):
+        if enabled:
+            for boid in self.boids:
+                boid.set_debug_mode(True)
+        else:
+            for boid in self.boids:
+                boid.set_debug_mode(False)
 
     def spawn_boid(self):
         rand_x = randint(0,self.boundary_size[0])
