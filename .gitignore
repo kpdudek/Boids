@@ -5,4 +5,4 @@ __pycache__/
 .VSCodeCounter/
 saves/
 *.out
-*.log
+*.log*

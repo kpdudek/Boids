@@ -7,6 +7,7 @@ from PyQt5.QtCore import Qt
 from random import randint
 from lib.Boid import Boid
 from PyQt5 import QtCore
+from typing import List
 import numpy as np
 
 class Scene(QGraphicsScene):
@@ -17,14 +18,20 @@ class Scene(QGraphicsScene):
         self.logger = initialize_logger()
         self.file_paths = FilePaths()
 
+        self.id = 0
         self.boundary_size = boundary_size
 
-    def initialize_scene(self,num_boids=50):        
+        self.separation_multiplier = 1.0
+        self.cohesion_multiplier = 1.0
+        self.align_multiplier = 1.0
+
+    def initialize_scene(self,num_boids=50,max_vel=400.0):        
         self.logger.info(f'Initializing scene with {num_boids} boids...')
         self.number_of_boids = num_boids
+        self.id = 0
 
         # Remove all items
-        self.boids = []
+        self.boids: List[Boid] = []
         items = self.items()
         for item in items:
             self.removeItem(item)
@@ -38,7 +45,7 @@ class Scene(QGraphicsScene):
         self.addItem(rect)
 
         for i in range(self.number_of_boids):
-            self.spawn_boid()
+            self.spawn_boid(max_vel)
 
     def set_debug_mode(self,enabled):
         if enabled:
@@ -48,14 +55,49 @@ class Scene(QGraphicsScene):
             for boid in self.boids:
                 boid.set_debug_mode(False)
 
-    def spawn_boid(self):
-        rand_x = randint(0,self.boundary_size[0])
-        rand_y = randint(0,self.boundary_size[1])
-        boid = Boid(self.boundary_size)
-        boid.teleport(np.array([rand_x,rand_y]))
+    def spawn_boid(self,max_vel,pose=None):
+        if not isinstance(pose,np.ndarray):
+            rand_x = randint(0,self.boundary_size[0])
+            rand_y = randint(0,self.boundary_size[1])
+            pose = np.array([rand_x,rand_y])
+        boid = Boid(self.boundary_size,self.id,1.0,max_vel,pose)
+        self.id += 1
         self.boids.append(boid)
         self.addItem(boid.pixmap)
 
-    def update(self,force,time):
-        for boid in self.boids:
-            boid.update(force,time)
+    def update(self,time):
+        # For each boid, find it's nearest neighbors
+        # by checking if their position lies within a certain raius
+        forces = []
+        for idx,boid in enumerate(self.boids):
+            nearest_neighbors = []
+            neighbor_ids = []
+            distances = []
+            velocities = []
+            for neighbor_idx,other_boid in enumerate(self.boids):
+                # Don't skip yourself. You're part of the group.
+                distance = np.linalg.norm(boid.physics.center_pose-other_boid.physics.center_pose)
+                if distance < boid.config['search_radius']:
+                    nearest_neighbors.append(other_boid)
+                    neighbor_ids.append(neighbor_idx)
+                    distances.append(distance)
+                    velocities.append(other_boid.physics.velocity.copy())
+
+            num_nearest_neighbors = len(nearest_neighbors)
+            if num_nearest_neighbors > 1:
+                separation_force = 0 * self.separation_multiplier
+                cohesion_force = 0 * self.cohesion_multiplier
+                align_force = (sum(velocities)/num_nearest_neighbors) * self.align_multiplier
+                force = align_force + separation_force + cohesion_force
+
+                self.logger.debug(f"Boid {boid.id} has neighbors: {neighbor_ids}")
+                self.logger.debug(f"\tPosition: {boid.physics.position}")
+                self.logger.debug(f"\tSteering force: {boid.steering_force}")
+                self.logger.debug(f"\tVelocity: {boid.physics.velocity}")
+                self.logger.debug(f"\tAlign force: {force}")
+            else:
+                force = np.zeros(2)
+            forces.append(force)
+
+        for idx,boid in enumerate(self.boids):
+            boid.update(forces[idx],time)

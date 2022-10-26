@@ -27,17 +27,18 @@ def edge_angle(V0,V1,V2):
 
 class Physics2D(object):
 
-    def __init__(self):
+    def __init__(self,mass,max_vel,center_offset):
         super().__init__()
 
         self.time = None
-        self.mass = 1.0
+        self.mass = mass
+        self.center_offset = center_offset
         self.theta = 0.0
+        self.max_velocity = max_vel
         self.position = np.zeros(2)
+        self.center_pose = self.position + self.center_offset
         self.velocity = np.zeros(2)
         self.acceleration = np.zeros(2)
-
-        self.max_velocity = 600.0
 
     def update(self,force,time):
         acceleration = force / self.mass
@@ -45,6 +46,7 @@ class Physics2D(object):
 
         self.velocity = self.velocity + delta_v
         self.position = self.position + (self.velocity * time)
+        self.center_pose = self.position.copy() + self.center_offset.copy()
         self.theta = edge_angle(np.zeros(2),self.velocity.copy(),np.array([100.0,0.0]))
 
         # TODO: cap the magnitude, not each component individually

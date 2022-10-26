@@ -1,28 +1,38 @@
 #!/usr/bin/env python3
 
-from lib.Utils import FilePaths, initialize_logger
+from lib.Utils import FilePaths, initialize_logger, set_logging_level
 from PyQt5.QtWidgets import QWidget
 from PyQt5 import uic
 
 class Settings(QWidget):
 
-    def __init__(self,main_window):
+    def __init__(self,main_window,debug_mode):
         super().__init__()
         self.logger = initialize_logger()
         self.file_paths = FilePaths()
         uic.loadUi(f'{self.file_paths.user_path}ui/Settings.ui',self)
 
         self.main_window = main_window
-
+        if debug_mode:
+            self.debug_mode_checkbox.setChecked(True)
+        
         self.log_fps_checkbox.stateChanged.connect(self.toggle_fps_log)
         self.debug_mode_checkbox.stateChanged.connect(self.toggle_debug_mode)
         self.reset_button.clicked.connect(self.reset_simulation)
+        self.alignment_slider.valueChanged.connect(self.update_alignment)
+
+    def update_alignment(self):
+        value = self.alignment_slider.value() / 10.0
+        self.main_window.scene.align_multiplier = value
+        self.align_label.setText(f"Alignment: {value}")
 
     def toggle_debug_mode(self):
         if self.debug_mode_checkbox.isChecked():
-            self.main_window.scene.set_debug_mode(True)
+            self.main_window.set_debug_mode(True)
+            set_logging_level("DEBUG")
         else:
-            self.main_window.scene.set_debug_mode(False)
+            self.main_window.set_debug_mode(False)
+            set_logging_level("INFO")
 
     def toggle_fps_log(self):
         if self.log_fps_checkbox.isChecked():
@@ -32,6 +42,9 @@ class Settings(QWidget):
 
     def reset_simulation(self):
         num_boids = self.boid_count_spinbox.value()
-        self.main_window.scene.initialize_scene(num_boids=num_boids)
+        max_vel = self.max_speed_spinbox.value()
+        self.main_window.frame_idx = 0
+        self.main_window.scene.initialize_scene(num_boids=num_boids,max_vel=max_vel)
         self.toggle_debug_mode()
         self.toggle_fps_log()
+        self.update_alignment()

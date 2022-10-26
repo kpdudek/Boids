@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsLineItem
+from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsLineItem, QGraphicsEllipseItem
+from PyQt5.QtWidgets import QGraphicsRectItem, QGraphicsTextItem
 from lib.Utils import initialize_logger, FilePaths
 from lib.Physics2D import Physics2D
 from PyQt5.QtCore import Qt
@@ -12,18 +13,21 @@ import json
 
 class Boid(object):
 
-    def __init__(self,boundary_size):
+    def __init__(self,boundary_size,id,mass,max_vel,starting_pose):
         super().__init__()
         self.logger = initialize_logger()
         self.file_paths = FilePaths()
+        self.id = id
         self.config = None
-        self.physics = Physics2D()
         self.load_config()
+        self.physics = Physics2D(mass,max_vel,self.center_offset)
+        self.teleport(starting_pose)
+        self.logger.debug(f"Boid {id} spawned at position: {self.physics.position}")
 
         self.boundary_size = boundary_size
         self.theta_prev = 0.0
 
-        vel_limit = 50
+        vel_limit = 200
         vel_x = randint(-vel_limit,vel_limit)
         vel_y = randint(-vel_limit,vel_limit)
         self.steering_force = np.array([vel_x,vel_y])
@@ -44,41 +48,55 @@ class Boid(object):
             pixmap = pixmap.scaled(x_size, y_size)
         
         self.pixmap = QGraphicsPixmapItem(pixmap)
-        self.pixmap.setTransformOriginPoint(pixmap.size().width()/2,pixmap.size().height()/2)
-
         x = pixmap.size().width()/2
         y = pixmap.size().height()/2
-        self.debug_line = QGraphicsLineItem(x+12,y,x+125,y,self.pixmap)
-        self.debug_line.hide()
+        self.center_offset = np.array([pixmap.size().width()/2,pixmap.size().height()/2])
+        self.pixmap.setTransformOriginPoint(x,y)
+        
+        self.debug_line = QGraphicsLineItem(x+20,y,x+125,y,self.pixmap)
 
-        starting_pose = np.array(self.config['pose'])
-        self.teleport(starting_pose)
+        rad = self.config['search_radius']
+        self.debug_search_radius = QGraphicsEllipseItem(x-rad/2,y-rad/2,rad,rad,self.pixmap)
+
+        self.debug_pose = QGraphicsRectItem(0,0,x_size,y_size,self.pixmap)
+        self.debug_text = QGraphicsTextItem(str(self.id),self.pixmap)
+        self.debug_text.setPos(0,-20)
+        self.debug_text.setFont(QtGui.QFont("Arial",12))
     
     def set_debug_mode(self,enabled):
         if enabled:
             self.debug_line.show()
+            self.debug_search_radius.show()
+            self.debug_pose.show()
+            self.debug_text.show()
         else:
             self.debug_line.hide()
+            self.debug_search_radius.hide()
+            self.debug_pose.hide()
+            self.debug_text.hide()
 
     def teleport(self,pose):
-        self.physics.position = pose
-        self.pixmap.setPos(pose[0],pose[1])
+        offset = pose - self.center_offset
+        self.physics.position = offset.copy()
+        self.physics.center_pose = self.physics.position + self.physics.center_offset
+        self.pixmap.setPos(offset[0],offset[1])
 
     def update(self,force,time):
         resulting_force = self.steering_force + force
         
         self.physics.update(resulting_force,time)
         self.theta_prev = self.physics.theta
+        # self.logger.debug(f"Boid: {self.id}, pos: {self.physics.position}, vel: {self.physics.velocity}")
 
         # Wrap position within the boundary size
-        if self.physics.position[0] > self.boundary_size[0]:
-            self.physics.position[0] = 0.0
-        elif self.physics.position[0] < 0.0:
-            self.physics.position[0] = self.boundary_size[0].copy()
-        elif self.physics.position[1] > self.boundary_size[1]:
-            self.physics.position[1] = 0.0
-        elif self.physics.position[1] < 0.0:
-            self.physics.position[1] = self.boundary_size[1].copy()
+        if self.physics.center_pose[0] > self.boundary_size[0]:
+            self.teleport(np.array([0.0,self.physics.position[1]]))
+        elif self.physics.center_pose[0] < 0.0:
+            self.teleport(np.array([self.boundary_size[0],self.physics.position[1]]))
+        elif self.physics.center_pose[1] > self.boundary_size[1]:
+            self.teleport(np.array([self.physics.position[0],0.0]))
+        elif self.physics.center_pose[1] < 0.0:
+            self.teleport(np.array([self.physics.position[0],self.boundary_size[1]]))
             
         pose = self.physics.position.copy()
         self.pixmap.setRotation(degrees(-self.physics.theta))

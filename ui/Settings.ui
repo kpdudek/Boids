@@ -121,31 +121,7 @@ font:  bold 10pt;</string>
          <property name="bottomMargin">
           <number>9</number>
          </property>
-         <item row="2" column="0">
-          <widget class="QCheckBox" name="log_fps_checkbox">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Log FPS</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QCheckBox" name="debug_mode_checkbox">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Debug mode</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
+         <item row="0" column="1">
           <widget class="QFrame" name="frame_6">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -172,36 +148,6 @@ font:  bold 10pt;</string>
             <property name="bottomMargin">
              <number>0</number>
             </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>125</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>125</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>11</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Number of Boids: </string>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="1">
              <widget class="QSpinBox" name="boid_count_spinbox">
               <property name="font">
@@ -216,14 +162,14 @@ font:  bold 10pt;</string>
                <number>500</number>
               </property>
               <property name="value">
-               <number>50</number>
+               <number>1</number>
               </property>
              </widget>
             </item>
            </layout>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="2" column="1">
           <widget class="QFrame" name="frame_5">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -250,36 +196,6 @@ font:  bold 10pt;</string>
             <property name="bottomMargin">
              <number>0</number>
             </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_5">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>125</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>125</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>11</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Max Speed: </string>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="1">
              <widget class="QDoubleSpinBox" name="max_speed_spinbox">
               <property name="font">
@@ -297,14 +213,44 @@ font:  bold 10pt;</string>
                <double>10.000000000000000</double>
               </property>
               <property name="value">
-               <double>600.000000000000000</double>
+               <double>400.000000000000000</double>
               </property>
              </widget>
             </item>
            </layout>
           </widget>
          </item>
-         <item row="4" column="0">
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>125</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>125</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Max Speed: </string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
           <widget class="QPushButton" name="reset_button">
            <property name="font">
             <font>
@@ -313,6 +259,67 @@ font:  bold 10pt;</string>
            </property>
            <property name="text">
             <string>Reset</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>125</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>125</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Number of Boids: </string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QCheckBox" name="debug_mode_checkbox">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Debug mode</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QCheckBox" name="log_fps_checkbox">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Log FPS</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -377,7 +384,7 @@ font:  bold 10pt;</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
             <item row="1" column="0">
-             <widget class="QLabel" name="label_2">
+             <widget class="QLabel" name="cohesion_label">
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
@@ -396,8 +403,11 @@ font:  bold 10pt;</string>
             </item>
             <item row="2" column="0">
              <widget class="QSlider" name="cohesion_slider">
+              <property name="minimum">
+               <number>0</number>
+              </property>
               <property name="maximum">
-               <number>10</number>
+               <number>250</number>
               </property>
               <property name="singleStep">
                <number>1</number>
@@ -406,7 +416,7 @@ font:  bold 10pt;</string>
                <number>5</number>
               </property>
               <property name="value">
-               <number>5</number>
+               <number>0</number>
               </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -450,7 +460,7 @@ font:  bold 10pt;</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
             <item row="0" column="0">
-             <widget class="QLabel" name="label">
+             <widget class="QLabel" name="align_label">
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
@@ -469,8 +479,11 @@ font:  bold 10pt;</string>
             </item>
             <item row="1" column="0">
              <widget class="QSlider" name="alignment_slider">
+              <property name="minimum">
+               <number>0</number>
+              </property>
               <property name="maximum">
-               <number>10</number>
+               <number>250</number>
               </property>
               <property name="singleStep">
                <number>1</number>
@@ -479,7 +492,10 @@ font:  bold 10pt;</string>
                <number>5</number>
               </property>
               <property name="value">
-               <number>5</number>
+               <number>0</number>
+              </property>
+              <property name="sliderPosition">
+               <number>0</number>
               </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -523,7 +539,7 @@ font:  bold 10pt;</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
             <item row="0" column="0">
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="separation_label">
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
@@ -542,8 +558,11 @@ font:  bold 10pt;</string>
             </item>
             <item row="1" column="0">
              <widget class="QSlider" name="separation_slider">
+              <property name="minimum">
+               <number>0</number>
+              </property>
               <property name="maximum">
-               <number>10</number>
+               <number>250</number>
               </property>
               <property name="singleStep">
                <number>1</number>
@@ -552,7 +571,7 @@ font:  bold 10pt;</string>
                <number>5</number>
               </property>
               <property name="value">
-               <number>5</number>
+               <number>0</number>
               </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>

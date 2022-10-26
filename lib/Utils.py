@@ -18,21 +18,30 @@ class FilePaths(object):
     else:
         raise Error('OS not recognized!')
 
-def initialize_logger() -> logging.Logger:
-    file_paths = FilePaths()
+def set_logging_level(level):
     logger = logging.getLogger("Rotating Log")
-    logger.setLevel(logging.INFO)
+    logger.setLevel(level)
+
+def initialize_logger(level=None) -> logging.Logger:
+    file_paths = FilePaths()
+
+    logger = logging.getLogger("Rotating Log")
+
+    if level:
+        logger.setLevel(level)
 
     if not logger.hasHandlers():
         max_size = 1024*1024*10 # 10Mb
         path = f'{file_paths.user_path}boids.log'
         formatter = logging.Formatter('[%(asctime)s.%(msecs)03d] (%(filename)s:%(lineno)d) %(levelname)s - %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
 
-        file_handler = RotatingFileHandler(path, maxBytes=max_size,backupCount=5)
+        file_handler = RotatingFileHandler(path, maxBytes=max_size, backupCount=5)
         file_handler.setFormatter(formatter)
+        # file_handler.setLevel(level)
 
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(formatter)
+        # console_handler.setLevel(level)
 
         logger.addHandler(console_handler)
         logger.addHandler(file_handler)

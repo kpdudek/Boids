@@ -6,11 +6,18 @@ from lib.MainWindow import MainWindow
 import sys
 
 def main():
-    logger = initialize_logger()
-    logger.info("Simulation starting...")
+    debug_mode = False
+
+    if "-d" in sys.argv:
+        logger = initialize_logger(level="DEBUG")
+        debug_mode = True
+    else:
+        logger = initialize_logger(level="INFO")
+    
+    logger.info(f"Simulation starting with options: {sys.argv[1:]}")
     app = QApplication(sys.argv)
     screen_resolution = app.desktop().screenGeometry()
-    main_window = MainWindow(screen_resolution)
+    main_window = MainWindow(screen_resolution,debug_mode)
     app.exec_()
     logger.info("Simulation ended.")
 
