@@ -20,8 +20,8 @@ class MainWindow(QMainWindow):
         uic.loadUi(f'{self.file_paths.user_path}ui/MainWindow.ui',self)
         self.setWindowTitle('Boids')
         
-        self.boundary_size = np.array([1500.0,500.0]) #[1500,800]
-        window_size = np.array([1550.0,800.0])
+        self.boundary_size = np.array([1800.0,800.0]) #[1500,800]
+        window_size = np.array([1850.0,950.0])
         self.screen_width, self.screen_height = screen_resolution.width(), screen_resolution.height()
         offset_x = int((self.screen_width-window_size[0])/2)
         offset_y = int((self.screen_height-window_size[1])/2)
@@ -72,7 +72,8 @@ class MainWindow(QMainWindow):
         if self.button == 1: # Left click
             pose_scene = self.camera.mapToScene(pose[0],pose[1])
             pose_scene = np.array([pose_scene.x(),pose_scene.y()])
-            self.scene.spawn_boid(400,pose=pose_scene)
+            max_vel = self.settings.max_speed_spinbox.value()
+            self.scene.spawn_boid(max_vel,pose=pose_scene)
             self.scene.boids[-1].set_debug_mode(self.debug_mode)
         elif self.button == 2: # Right click
             pass

@@ -162,7 +162,7 @@ font:  bold 10pt;</string>
                <number>500</number>
               </property>
               <property name="value">
-               <number>1</number>
+               <number>20</number>
               </property>
              </widget>
             </item>
@@ -416,7 +416,7 @@ font:  bold 10pt;</string>
                <number>5</number>
               </property>
               <property name="value">
-               <number>0</number>
+               <number>22</number>
               </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -492,10 +492,10 @@ font:  bold 10pt;</string>
                <number>5</number>
               </property>
               <property name="value">
-               <number>0</number>
+               <number>8</number>
               </property>
               <property name="sliderPosition">
-               <number>0</number>
+               <number>8</number>
               </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -571,7 +571,7 @@ font:  bold 10pt;</string>
                <number>5</number>
               </property>
               <property name="value">
-               <number>0</number>
+               <number>3</number>
               </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>

@@ -20,6 +20,18 @@ class Settings(QWidget):
         self.debug_mode_checkbox.stateChanged.connect(self.toggle_debug_mode)
         self.reset_button.clicked.connect(self.reset_simulation)
         self.alignment_slider.valueChanged.connect(self.update_alignment)
+        self.cohesion_slider.valueChanged.connect(self.update_cohesion)
+        self.separation_slider.valueChanged.connect(self.update_separation)
+
+    def update_cohesion(self):
+        value = self.cohesion_slider.value() / 10.0
+        self.main_window.scene.cohesion_multiplier = value
+        self.cohesion_label.setText(f"Cohesion: {value}")
+
+    def update_separation(self):
+        value = self.separation_slider.value() / 10.0
+        self.main_window.scene.separation_multiplier = value
+        self.separation_label.setText(f"Separation: {value}")
 
     def update_alignment(self):
         value = self.alignment_slider.value() / 10.0
@@ -48,3 +60,5 @@ class Settings(QWidget):
         self.toggle_debug_mode()
         self.toggle_fps_log()
         self.update_alignment()
+        self.update_cohesion()
+        self.update_separation()

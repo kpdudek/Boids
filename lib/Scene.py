@@ -21,9 +21,9 @@ class Scene(QGraphicsScene):
         self.id = 0
         self.boundary_size = boundary_size
 
-        self.separation_multiplier = 1.0
-        self.cohesion_multiplier = 1.0
-        self.align_multiplier = 1.0
+        self.separation_multiplier = 0.0
+        self.cohesion_multiplier = 0.0
+        self.align_multiplier = 0.0
 
     def initialize_scene(self,num_boids=50,max_vel=400.0):        
         self.logger.info(f'Initializing scene with {num_boids} boids...')
@@ -70,23 +70,27 @@ class Scene(QGraphicsScene):
         # by checking if their position lies within a certain raius
         forces = []
         for idx,boid in enumerate(self.boids):
-            nearest_neighbors = []
+            # nearest_neighbors = []
             neighbor_ids = []
             distances = []
             velocities = []
+            positions = []
+            offsets = []
             for neighbor_idx,other_boid in enumerate(self.boids):
                 # Don't skip yourself. You're part of the group.
                 distance = np.linalg.norm(boid.physics.center_pose-other_boid.physics.center_pose)
                 if distance < boid.config['search_radius']:
-                    nearest_neighbors.append(other_boid)
+                    # nearest_neighbors.append(other_boid)
                     neighbor_ids.append(neighbor_idx)
                     distances.append(distance)
                     velocities.append(other_boid.physics.velocity.copy())
-
-            num_nearest_neighbors = len(nearest_neighbors)
+                    positions.append(other_boid.physics.center_pose.copy())
+                    offsets.append(other_boid.physics.position - boid.physics.position)
+                
+            num_nearest_neighbors = len(neighbor_ids)
             if num_nearest_neighbors > 1:
-                separation_force = 0 * self.separation_multiplier
-                cohesion_force = 0 * self.cohesion_multiplier
+                separation_force = -1.0 * (sum(offsets)/num_nearest_neighbors) * self.separation_multiplier
+                cohesion_force = (sum(positions)/num_nearest_neighbors) * self.cohesion_multiplier
                 align_force = (sum(velocities)/num_nearest_neighbors) * self.align_multiplier
                 force = align_force + separation_force + cohesion_force
 
@@ -97,6 +101,7 @@ class Scene(QGraphicsScene):
                 self.logger.debug(f"\tAlign force: {force}")
             else:
                 force = np.zeros(2)
+
             forces.append(force)
 
         for idx,boid in enumerate(self.boids):

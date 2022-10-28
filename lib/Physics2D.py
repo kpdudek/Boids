@@ -35,10 +35,10 @@ class Physics2D(object):
         self.center_offset = center_offset
         self.theta = 0.0
         self.max_velocity = max_vel
-        self.position = np.zeros(2)
-        self.center_pose = self.position + self.center_offset
-        self.velocity = np.zeros(2)
-        self.acceleration = np.zeros(2)
+        self.position : np.ndarray = np.zeros(2)
+        self.center_pose : np.ndarray = self.position + self.center_offset
+        self.velocity : np.ndarray = np.zeros(2)
+        self.acceleration : np.ndarray = np.zeros(2)
 
     def update(self,force,time):
         acceleration = force / self.mass
@@ -48,9 +48,9 @@ class Physics2D(object):
         self.position = self.position + (self.velocity * time)
         self.center_pose = self.position.copy() + self.center_offset.copy()
         self.theta = edge_angle(np.zeros(2),self.velocity.copy(),np.array([100.0,0.0]))
-
-        # TODO: cap the magnitude, not each component individually
-        if abs(self.velocity[0]) > self.max_velocity:
-            self.velocity[0] = self.max_velocity * np.sign(self.velocity[0])
-        if abs(self.velocity[1]) > self.max_velocity:
-            self.velocity[1] = self.max_velocity * np.sign(self.velocity[1])
+        
+        # If the velocity exceeds the maximum magnitude, scale the velocity vector to match its value
+        vel_mag = np.linalg.norm(self.velocity)
+        if vel_mag > self.max_velocity:
+            scale = self.max_velocity / vel_mag
+            self.velocity = self.velocity * scale       

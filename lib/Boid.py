@@ -30,7 +30,7 @@ class Boid(object):
         vel_limit = 200
         vel_x = randint(-vel_limit,vel_limit)
         vel_y = randint(-vel_limit,vel_limit)
-        self.steering_force = np.array([vel_x,vel_y])
+        self.steering_force = np.zeros(2)#np.array([vel_x,vel_y])
 
     def load_config(self):
         with open(f'{self.file_paths.entity_path}boid.json','r') as fp:
@@ -46,6 +46,11 @@ class Boid(object):
             pixmap = pixmap.scaled(x_size, y_size, Qt.KeepAspectRatio)
         else:
             pixmap = pixmap.scaled(x_size, y_size)
+        mask = pixmap.createMaskFromColor(QtGui.QColor(0, 0, 0), Qt.MaskOutColor)
+        p = QtGui.QPainter(pixmap)
+        p.setPen(QtGui.QColor(randint(0,255), randint(0,255), randint(0,255)))
+        p.drawPixmap(pixmap.rect(), mask, mask.rect())
+        p.end()
         
         self.pixmap = QGraphicsPixmapItem(pixmap)
         x = pixmap.size().width()/2
@@ -76,7 +81,7 @@ class Boid(object):
             self.debug_text.hide()
 
     def teleport(self,pose):
-        offset = pose - self.center_offset
+        offset = pose.copy() - self.center_offset.copy()
         self.physics.position = offset.copy()
         self.physics.center_pose = self.physics.position + self.physics.center_offset
         self.pixmap.setPos(offset[0],offset[1])

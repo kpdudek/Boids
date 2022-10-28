@@ -24,7 +24,6 @@ def set_logging_level(level):
 
 def initialize_logger(level=None) -> logging.Logger:
     file_paths = FilePaths()
-
     logger = logging.getLogger("Rotating Log")
 
     if level:
@@ -37,11 +36,9 @@ def initialize_logger(level=None) -> logging.Logger:
 
         file_handler = RotatingFileHandler(path, maxBytes=max_size, backupCount=5)
         file_handler.setFormatter(formatter)
-        # file_handler.setLevel(level)
 
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(formatter)
-        # console_handler.setLevel(level)
 
         logger.addHandler(console_handler)
         logger.addHandler(file_handler)
