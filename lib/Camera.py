@@ -36,20 +36,3 @@ class Camera(QGraphicsView):
 
     def keyReleaseEvent(self, event):
         self.keyrelease_signal.emit(event)
-
-    def update(self):
-        cam_speed = 6.0
-        zoom_speed = 0.008
-        for key in self.keys_pressed:
-            if key == Qt.Key_W:
-                self.camera.translate(0,cam_speed)
-            elif key == Qt.Key_S:
-                self.camera.translate(0,-cam_speed)
-            elif key == Qt.Key_A:
-                self.camera.translate(cam_speed,0)
-            elif key == Qt.Key_D:
-                self.camera.translate(-cam_speed,0)
-            elif key == Qt.Key_Z:
-                self.camera.scale(1.0-zoom_speed,1.0-zoom_speed)
-            elif key == Qt.Key_X:
-                self.camera.scale(1.0+zoom_speed,1.0+zoom_speed)

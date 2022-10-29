@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsRectItem
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsRectItem, QGraphicsTextItem
 from lib.Utils import initialize_logger, FilePaths
 from PyQt5.QtGui import QPen
 from PyQt5.QtCore import Qt
@@ -24,6 +24,8 @@ class Scene(QGraphicsScene):
         self.separation_multiplier = 0.0
         self.cohesion_multiplier = 0.0
         self.align_multiplier = 0.0
+        self.x_offset = 0
+        self.y_offset = 0
 
     def initialize_scene(self,num_boids=50,max_vel=400.0):        
         self.logger.info(f'Initializing scene with {num_boids} boids...')
@@ -43,6 +45,9 @@ class Scene(QGraphicsScene):
         pen.setWidth(3)
         rect.setPen(pen)
         self.addItem(rect)
+        
+        self.boid_count_display = QGraphicsTextItem(f"Boids: {len(self.boids)}")
+        self.addItem(self.boid_count_display)
 
         for i in range(self.number_of_boids):
             self.spawn_boid(max_vel)
@@ -64,13 +69,13 @@ class Scene(QGraphicsScene):
         self.id += 1
         self.boids.append(boid)
         self.addItem(boid.pixmap)
+        self.boid_count_display.setPlainText(f"Boids: {len(self.boids)}")
 
     def update(self,time):
         # For each boid, find it's nearest neighbors
         # by checking if their position lies within a certain raius
         forces = []
         for idx,boid in enumerate(self.boids):
-            # nearest_neighbors = []
             neighbor_ids = []
             distances = []
             velocities = []

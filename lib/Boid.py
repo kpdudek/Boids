@@ -86,6 +86,10 @@ class Boid(object):
         self.physics.center_pose = self.physics.position + self.physics.center_offset
         self.pixmap.setPos(offset[0],offset[1])
 
+    def rotate(self,angle):
+        self.physics.theta = angle
+        self.pixmap.setRotation(degrees(-angle))
+
     def update(self,force,time):
         resulting_force = self.steering_force + force
         
