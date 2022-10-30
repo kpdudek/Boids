@@ -77,21 +77,20 @@ class Scene(QGraphicsScene):
         forces = []
         for idx,boid in enumerate(self.boids):
             neighbor_ids = []
-            distances = []
             velocities = []
             positions = []
+            distances = []
             offsets = []
             for neighbor_idx,other_boid in enumerate(self.boids):
                 # Don't skip yourself. You're part of the group.
                 distance = np.linalg.norm(boid.physics.center_pose-other_boid.physics.center_pose)
                 if distance < boid.config['search_radius']:
-                    # nearest_neighbors.append(other_boid)
                     neighbor_ids.append(neighbor_idx)
                     distances.append(distance)
                     velocities.append(other_boid.physics.velocity.copy())
                     positions.append(other_boid.physics.center_pose.copy())
                     offsets.append(other_boid.physics.position - boid.physics.position)
-                
+            
             num_nearest_neighbors = len(neighbor_ids)
             if num_nearest_neighbors > 1:
                 separation_force = -1.0 * (sum(offsets)/num_nearest_neighbors) * self.separation_multiplier
@@ -101,9 +100,11 @@ class Scene(QGraphicsScene):
 
                 self.logger.debug(f"Boid {boid.id} has neighbors: {neighbor_ids}")
                 self.logger.debug(f"\tPosition: {boid.physics.position}")
-                self.logger.debug(f"\tSteering force: {boid.steering_force}")
                 self.logger.debug(f"\tVelocity: {boid.physics.velocity}")
-                self.logger.debug(f"\tAlign force: {force}")
+                self.logger.debug(f"\tSteering force: {boid.steering_force}")
+                self.logger.debug(f"\tAlign force: {align_force}")
+                self.logger.debug(f"\tCohesion force: {cohesion_force}")
+                self.logger.debug(f"\tSeparation force: {separation_force}")
             else:
                 force = np.zeros(2)
 

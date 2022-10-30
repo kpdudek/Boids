@@ -95,7 +95,6 @@ class Boid(object):
         
         self.physics.update(resulting_force,time)
         self.theta_prev = self.physics.theta
-        # self.logger.debug(f"Boid: {self.id}, pos: {self.physics.position}, vel: {self.physics.velocity}")
 
         # Wrap position within the boundary size
         if self.physics.center_pose[0] > self.boundary_size[0]:
