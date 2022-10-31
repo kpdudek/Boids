@@ -19,6 +19,7 @@ class Scene(QGraphicsScene):
         self.file_paths = FilePaths()
 
         self.id = 0
+        self.debug_mode = False
         self.boundary_size = boundary_size
 
         self.separation_multiplier = 0.0
@@ -34,19 +35,21 @@ class Scene(QGraphicsScene):
 
         # Remove all items
         self.boids: List[Boid] = []
+        self.obstacles: List[Boid] = []
+        
         items = self.items()
         for item in items:
             self.removeItem(item)
 
         self.setSceneRect(0,0,self.boundary_size[0],self.boundary_size[1])
-
         rect = QGraphicsRectItem(0.0,0.0,self.boundary_size[0],self.boundary_size[1])
         pen = QPen(Qt.black)
         pen.setWidth(3)
         rect.setPen(pen)
         self.addItem(rect)
         
-        self.boid_count_display = QGraphicsTextItem(f"Boids: {len(self.boids)}")
+        self.boid_count_display = QGraphicsTextItem()
+        self.update_window_text()
         self.addItem(self.boid_count_display)
 
         for i in range(self.number_of_boids):
@@ -56,9 +59,16 @@ class Scene(QGraphicsScene):
         if enabled:
             for boid in self.boids:
                 boid.set_debug_mode(True)
+                self.debug_mode = True
         else:
             for boid in self.boids:
                 boid.set_debug_mode(False)
+                self.debug_mode = False
+    
+    def update_window_text(self):
+        text = f"Boids: {len(self.boids)}\n"
+        text += f"Obstacles: {len(self.obstacles)}"
+        self.boid_count_display.setPlainText(text)
 
     def spawn_boid(self,max_vel,pose=None):
         if not isinstance(pose,np.ndarray):
@@ -69,7 +79,7 @@ class Scene(QGraphicsScene):
         self.id += 1
         self.boids.append(boid)
         self.addItem(boid.pixmap)
-        self.boid_count_display.setPlainText(f"Boids: {len(self.boids)}")
+        self.update_window_text()
 
     def update(self,time):
         # For each boid, find it's nearest neighbors
@@ -91,6 +101,8 @@ class Scene(QGraphicsScene):
                     positions.append(other_boid.physics.center_pose.copy())
                     offsets.append(other_boid.physics.position - boid.physics.position)
             
+            pass
+            
             num_nearest_neighbors = len(neighbor_ids)
             if num_nearest_neighbors > 1:
                 separation_force = -1.0 * (sum(offsets)/num_nearest_neighbors) * self.separation_multiplier
@@ -98,13 +110,14 @@ class Scene(QGraphicsScene):
                 align_force = (sum(velocities)/num_nearest_neighbors) * self.align_multiplier
                 force = align_force + separation_force + cohesion_force
 
-                self.logger.debug(f"Boid {boid.id} has neighbors: {neighbor_ids}")
-                self.logger.debug(f"\tPosition: {boid.physics.position}")
-                self.logger.debug(f"\tVelocity: {boid.physics.velocity}")
-                self.logger.debug(f"\tSteering force: {boid.steering_force}")
-                self.logger.debug(f"\tAlign force: {align_force}")
-                self.logger.debug(f"\tCohesion force: {cohesion_force}")
-                self.logger.debug(f"\tSeparation force: {separation_force}")
+                if self.debug_mode:
+                    self.logger.debug(f"Boid {boid.id} has neighbors: {neighbor_ids}")
+                    self.logger.debug(f"\tPosition: {boid.physics.position}")
+                    self.logger.debug(f"\tVelocity: {boid.physics.velocity}")
+                    self.logger.debug(f"\tSteering force: {boid.steering_force}")
+                    self.logger.debug(f"\tAlign force: {align_force}")
+                    self.logger.debug(f"\tCohesion force: {cohesion_force}")
+                    self.logger.debug(f"\tSeparation force: {separation_force}")
             else:
                 force = np.zeros(2)
 

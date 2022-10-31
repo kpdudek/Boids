@@ -34,11 +34,11 @@ class MainWindow(QMainWindow):
         self.selected_boids: List[Boid] = []
         self.debug_mode = debug_mode
         self.keys_pressed = []
-        self.loop_fps = 65.0
+        self.loop_fps = 60.0
         self.paused = False
         self.delta_t = 0.0
         self.button = None
-        self.fps = 65.0
+        self.fps = 60.0
 
         self.game_timer = QTimer()
         self.game_timer.timeout.connect(self.game_loop)
@@ -144,6 +144,7 @@ class MainWindow(QMainWindow):
         if key == Qt.Key_Escape:
             self.shutdown()
         elif key == Qt.Key_C:
+            self.scene.boid_count_display.setPos(0,0)
             self.camera.resetTransform()
         elif key == Qt.Key_P:
             if self.paused:
@@ -190,14 +191,29 @@ class MainWindow(QMainWindow):
     def process_keys(self):
         cam_speed = 6.0
         zoom_speed = 0.008
+        scale_x = self.camera.transform().m11()
+        scale_y = self.camera.transform().m22()
+        camera_x = self.camera.geometry().width()
+        camera_y = self.camera.geometry().height()
+        scene_x = self.scene.sceneRect().width()
+        scene_y = self.scene.sceneRect().height()
+        
         for key in self.keys_pressed:
             if key == Qt.Key_W:
+                if camera_y > scene_y*scale_y:
+                    return
                 self.camera.translate(0,cam_speed)
             elif key == Qt.Key_S:
+                if camera_y > scene_y*scale_y:
+                    return
                 self.camera.translate(0,-cam_speed)
             elif key == Qt.Key_A:
+                if camera_x > scene_x*scale_x:
+                    return
                 self.camera.translate(cam_speed,0)
             elif key == Qt.Key_D:
+                if camera_x > scene_x*scale_x:
+                    return
                 self.camera.translate(-cam_speed,0)
             elif key == Qt.Key_Z:
                 self.camera.scale(1.0-zoom_speed,1.0-zoom_speed)
@@ -210,15 +226,16 @@ class MainWindow(QMainWindow):
         self.frame_idx = self.loop_count
 
     def game_loop(self):
-        # TODO: Make delta_t the time between last loop and this loop
         if self.paused:
             self.process_keys()
             return
         elif self.debug_mode and self.loop_count >= self.frame_idx:
             self.process_keys()
             return
+        
         self.loop_count += 1
-        self.logger.debug(f"Loop number: {self.loop_count}")            
+        if self.debug_mode:
+            self.logger.debug(f"Loop number: {self.loop_count}")            
         
         tic = time.time()
         self.process_keys()        
@@ -231,4 +248,3 @@ class MainWindow(QMainWindow):
         if self.delta_t > 0.0:
             split_fps = 1.0/(toc-tic)
             self.loop_fps = split_fps
-            # self.loop_fps = (self.loop_fps + split_fps)/2.0

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from lib.Utils import FilePaths, initialize_logger, set_logging_level
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QRadioButton
 from PyQt5 import uic
 
 class Settings(QWidget):
@@ -22,6 +22,21 @@ class Settings(QWidget):
         self.alignment_slider.valueChanged.connect(self.update_alignment)
         self.cohesion_slider.valueChanged.connect(self.update_cohesion)
         self.separation_slider.valueChanged.connect(self.update_separation)
+
+        layout = self.tool_frame.layout()
+        widgets = (layout.itemAt(i).widget() for i in range(layout.count()))
+        for widget in widgets:
+            if type(widget) == QRadioButton:
+                widget.toggled.connect(self.update_tool_type)
+
+    def update_tool_type(self,checked):
+        if not checked:
+            return
+        if self.spawn_boid_radiobutton.isChecked():
+            self.main_window.tool_type = "boid"
+        elif self.spawn_obstacle_radiobutton.isChecked():
+            self.main_window.tool_type = "obstacle"
+        self.logger.info(f"Setting tool type to: {self.main_window.tool_type}")
 
     def update_cohesion(self):
         value = self.cohesion_slider.value() / 10.0
