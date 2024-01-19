@@ -10,6 +10,7 @@ def main():
     cl_args = sys.argv[1:]
     if "-d" in cl_args:
         logger = initialize_logger(level="DEBUG")
+        cl_args.remove('-d')
         debug_mode = True
     else:
         logger = initialize_logger(level="INFO")
@@ -22,7 +23,9 @@ def main():
         main_window.settings.boid_count_spinbox.setValue(int(cl_args[0]))
         main_window.settings.reset_simulation()
     except ValueError:
-        pass
+        logger.info(f'No boid count specified.')
+    except IndexError:
+        logger.info(f'No boid count specified.')
     
     app.exec_()
     logger.info("Simulation ended.")

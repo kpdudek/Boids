@@ -89,6 +89,7 @@ class MainWindow(QMainWindow):
                 return
             pose_scene = self.camera.mapToScene(pose[0],pose[1])
             pose_scene = np.array([pose_scene.x(),pose_scene.y()])
+            
             max_vel = self.settings.max_speed_spinbox.value()
             self.scene.spawn_boid(max_vel,pose=pose_scene)
             self.scene.boids[-1].set_debug_mode(self.debug_mode)

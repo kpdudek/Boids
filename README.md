@@ -48,3 +48,11 @@ After installation, launch the simulation by navigating to the `Boids` repo you 
 **Center Camera:** C
 
 **Pause/Resume:** P
+
+**Spawn Boid** LMB (click and drag to set initial velocity)
+
+**Delete Boid:** RMB
+
+**Toggle Debug Mode:** Space Bar
+
+**Next Frame [Debug Mode]** N
